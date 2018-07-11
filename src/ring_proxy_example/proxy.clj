@@ -3,6 +3,7 @@
       [java.net URI] )
     (:require
       [clj-http.client         :refer [request]]
+      [clj-http.conn-mgr       :as conn]
       [clojure.string          :refer [join split]]
       [ring.adapter.jetty      :refer [run-jetty]] ))
 
@@ -13,6 +14,9 @@
     (let [buf (byte-array len)]
       (.read rdr buf)
       buf)))
+
+(def reusable-conn-mgr (delay (conn/make-reusable-conn-manager {:timeout 10 :threads 1000 :default-per-route 1000 })))
+(def http-client (atom nil))
 
 (defn wrap-proxy
   "Proxies requests from proxied-path, a local URI, to the remote URI at
@@ -29,6 +33,8 @@
        (-> (merge {:method (:request-method req)
                    :url (str remote-uri "?" (:query-string req))
                    :headers (dissoc (:headers req) "host" "content-length")
+                   :http-client @http-client
+                   :connection-manager @reusable-conn-mgr
                    :body (if-let [len (get-in req [:headers "content-length"])]
                            (slurp-binary (:body req) (Integer/parseInt len)))
                    :follow-redirects true
