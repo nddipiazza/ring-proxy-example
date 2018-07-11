@@ -6,7 +6,7 @@
                  [compojure "1.5.1"]
                  [ring/ring-defaults "0.2.1"]
                  [potemkin "0.4.5"]
-                 [clj-http "3.9.0"]]
+                 [clj-http "3.9.0-pool-logging"]]
   :plugins [[lein-ring "0.9.7"]]
   :ring {:handler ring-proxy-example.handler/app}
   :profiles

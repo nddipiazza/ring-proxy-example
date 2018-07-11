@@ -15,7 +15,7 @@
       (.read rdr buf)
       buf)))
 
-(def reusable-conn-mgr (delay (conn/make-reusable-conn-manager {:timeout 10 :threads 1000 :default-per-route 1000 })))
+(def reusable-conn-mgr (delay (conn/make-reusable-conn-manager {:timeout 200 :threads 50 :default-per-route 50 })))
 (def http-client (atom nil))
 
 (defn wrap-proxy
